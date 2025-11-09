@@ -6,7 +6,6 @@ import com.sirelon.newsapp.feature.feed.local.FeedsLocalSource
 import com.sirelon.newsapp.feature.feed.remote.FeedsRemoteSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 internal class FeedRepository(
@@ -20,7 +19,6 @@ internal class FeedRepository(
 
         return localSource
             .getArticles(sources)
-            .distinctUntilChanged()
             .map { TopHeadlines(articles = it, fromNet = false) }
             .withRefreshAction {
                 val articles = refreshArticles(sources)
@@ -30,7 +28,8 @@ internal class FeedRepository(
 
     private suspend fun refreshArticles(sources: List<String>): List<Article> {
         val response = remoteSource.loadHeadlines(sources = sources)
-        delay(2_000)
+        // TODO: just to simulate network delay
+        delay(1_000)
 
         val articles = headlinesMapper.map(response)
         localSource.storeArticles(articles)

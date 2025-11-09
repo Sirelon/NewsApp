@@ -3,6 +3,7 @@ package com.sirelon.newsapp.feature.feed.local
 import com.sirelon.newsapp.feature.feed.domain.Article
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 internal class FeedsLocalSource {
 
@@ -13,5 +14,6 @@ internal class FeedsLocalSource {
     }
 
     // TODO: cache sources with data
-    fun getArticles(sources: List<String>): Flow<List<Article>> = articlesFlow
+    fun getArticles(sources: List<String>): Flow<List<Article>> =
+        articlesFlow.distinctUntilChanged()
 }
