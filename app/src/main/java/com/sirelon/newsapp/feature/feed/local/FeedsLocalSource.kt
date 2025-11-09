@@ -1,14 +1,17 @@
 package com.sirelon.newsapp.feature.feed.local
 
 import com.sirelon.newsapp.feature.feed.domain.Article
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal class FeedsLocalSource {
 
-    private var cachedArticles: List<Article> = emptyList()
+    private val articlesFlow = MutableSharedFlow<List<Article>>(replay = 1)
 
-    fun cacheArticles(articles: List<Article>) {
-        cachedArticles = articles
+    suspend fun storeArticles(articles: List<Article>) {
+        articlesFlow.emit(articles)
     }
 
-    fun getCachedArticles(): List<Article> = cachedArticles
+    // TODO: cache sources with data
+    fun getArticles(sources: List<String>): Flow<List<Article>> = articlesFlow
 }

@@ -6,10 +6,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
+import coil3.request.crossfade
 
-/**
- * Minimal wrapper over Coil's AsyncImage for consistent defaults.
- */
 @Composable
 fun NetworkImage(
     url: String?,

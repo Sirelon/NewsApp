@@ -10,6 +10,7 @@ internal sealed interface FeedContract {
     )
 
     sealed interface Event {
+        data object Refresh : Event
         data class ArticleClicked(val url: String) : Event
     }
 
