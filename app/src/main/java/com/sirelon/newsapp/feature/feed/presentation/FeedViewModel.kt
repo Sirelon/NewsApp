@@ -19,7 +19,11 @@ internal class FeedViewModel(
         )
 
     override fun onEvent(event: FeedContract.Event) {
-        // TODO:
+        when (event) {
+            is FeedContract.Event.ArticleClicked -> {
+                postEffect(FeedContract.Effect.OpenUrl(url = event.url))
+            }
+        }
     }
 
     init {

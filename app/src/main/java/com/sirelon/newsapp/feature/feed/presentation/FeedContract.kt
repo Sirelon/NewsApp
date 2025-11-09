@@ -10,10 +10,10 @@ internal sealed interface FeedContract {
     )
 
     sealed interface Event {
-
+        data class ArticleClicked(val url: String) : Event
     }
 
     sealed interface Effect {
-
+        data class OpenUrl(val url: String) : Effect
     }
 }
