@@ -19,6 +19,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // TODO: Ideally should be moved to some local properties, and shared in repo.
+        buildConfigField("String", "NEWS_API_TOKEN", "\"f85eb3fa74ca4ae9b9b41fbc356be5b9\"")
     }
 
     buildTypes {
@@ -39,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
