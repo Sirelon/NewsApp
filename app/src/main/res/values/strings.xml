@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">NewsApp</string>
+    <string name="feed_top_headlines">Top Headlines</string>
+    <string name="feed_article_author">Author: %1$s</string>
 </resources>
