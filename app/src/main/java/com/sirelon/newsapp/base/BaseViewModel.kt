@@ -15,15 +15,15 @@ abstract class BaseViewModel<State, Event, Effect> : ViewModel() {
     private val _effects = MutableSharedFlow<Effect>()
     val effects = _effects.asSharedFlow()
 
-    abstract fun initialState(): State
+    protected abstract fun initialState(): State
 
     abstract fun onEvent(event: Event)
 
-    fun setState(function: (State) -> State) {
+    protected fun setState(function: (State) -> State) {
         _state.update(function)
     }
 
-    fun postEffect(effect: Effect) {
+    protected fun postEffect(effect: Effect) {
         _effects.tryEmit(effect)
     }
 }

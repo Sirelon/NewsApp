@@ -5,6 +5,7 @@ import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
 data class Article(
+    val id: String,
     val title: String,
     val overview: String,
     val fullContent: String,
