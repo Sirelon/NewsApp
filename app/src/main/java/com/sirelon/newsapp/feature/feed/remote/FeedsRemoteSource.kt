@@ -8,10 +8,9 @@ import io.ktor.client.request.parameter
 
 internal class FeedsRemoteSource(private val client: HttpClient) {
 
-    suspend fun loadHeadlines(sources: List<String>): HeadlinesResponse {
+    suspend fun loadHeadlines(sources: List<String>, pageSize: Int): HeadlinesResponse {
         return client.get("top-headlines") {
-            // TODO:
-//            parameter("country", countryCode)
+            parameter("pageSize", pageSize)
             if (sources.isNotEmpty()) {
                 parameter("sources", sources.joinToString(separator = ","))
             }

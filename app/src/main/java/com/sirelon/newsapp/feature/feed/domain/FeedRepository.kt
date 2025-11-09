@@ -8,6 +8,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+private const val DEFAULT_PAGE_SIZE = 100
+
 internal class FeedRepository(
     private val localSource: FeedsLocalSource,
     private val remoteSource: FeedsRemoteSource,
@@ -15,7 +17,15 @@ internal class FeedRepository(
 ) {
 
     fun topHeadlines(): Flow<TopHeadlines> {
-        val sources = listOf("abc-news", "associated-press", "independent")
+        val sources = listOf(
+            "abc-news",
+            "associated-press",
+            "independent",
+            "bild",
+            "bbc-news",
+            "the-washington-post",
+            "cbs-news",
+        )
 
         return localSource
             .getArticles(sources)
@@ -27,7 +37,7 @@ internal class FeedRepository(
     }
 
     private suspend fun refreshArticles(sources: List<String>): List<Article> {
-        val response = remoteSource.loadHeadlines(sources = sources)
+        val response = remoteSource.loadHeadlines(sources = sources, pageSize = DEFAULT_PAGE_SIZE)
         // TODO: just to simulate network delay
         delay(1_000)
 
