@@ -16,5 +16,6 @@ internal sealed interface FeedContract {
 
     sealed interface Effect {
         data class OpenUrl(val url: String) : Effect
+        data object Idle : Effect
     }
 }
