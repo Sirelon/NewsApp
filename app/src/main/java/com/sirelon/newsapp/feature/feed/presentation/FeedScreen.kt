@@ -58,8 +58,9 @@ fun FeedScreen() {
         when (val e = effect) {
             is FeedContract.Effect.OpenUrl -> context.openChromeTab(e.url)
             is FeedContract.Effect.ShowSnackbar -> snackbarHostState.showSnackbar(
-                context.getString(e.messageRes)
+                message = context.getString(e.messageRes),
             )
+
             FeedContract.Effect.Idle -> {
                 // no op
             }
