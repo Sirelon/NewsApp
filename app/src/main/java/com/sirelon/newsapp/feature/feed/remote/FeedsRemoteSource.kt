@@ -15,6 +15,6 @@ internal class FeedsRemoteSource(private val client: HttpClient) {
             if (sources.isNotEmpty()) {
                 parameter("sources", sources.joinToString(separator = ","))
             }
-        }.body<HeadlinesResponse>()
+        }.body()
     }
 }
