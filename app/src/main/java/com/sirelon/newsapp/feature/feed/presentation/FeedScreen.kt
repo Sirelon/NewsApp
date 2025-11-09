@@ -1,6 +1,5 @@
 package com.sirelon.newsapp.feature.feed.presentation
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,11 +12,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -38,7 +37,6 @@ import com.sirelon.newsapp.common.openChromeTab
 import com.sirelon.newsapp.feature.feed.domain.Article
 import com.sirelon.newsapp.ui.components.NetworkImage
 import com.sirelon.newsapp.ui.theme.AppDimens
-import kotlinx.coroutines.flow.collectLatest
 import org.koin.compose.viewmodel.koinViewModel
 
 private const val ARTICLE_ITEM_CT = "article_item"
@@ -51,12 +49,16 @@ fun FeedScreen() {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.effects.collectLatest { effect ->
-            when (effect) {
-                is FeedContract.Effect.OpenUrl -> context.openChromeTab(effect.url)
+    val effect by viewModel.effects.collectAsStateWithLifecycle(FeedContract.Effect.Idle)
+
+    LaunchedEffect(effect) {
+        when (val e = effect) {
+            is FeedContract.Effect.OpenUrl -> context.openChromeTab(e.url)
+            FeedContract.Effect.Idle -> {
+                // no op
             }
         }
+        viewModel.resetEffects()
     }
 
     FeedScreenContent(state = state, onEvent = viewModel::onEvent)
@@ -67,18 +69,21 @@ fun FeedScreen() {
 private fun FeedScreenContent(state: FeedContract.State, onEvent: (FeedContract.Event) -> Unit) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
+            LargeTopAppBar(
                 title = { Text(text = stringResource(R.string.feed_top_headlines)) },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
             )
         }
     ) { paddingValues ->
         val arrangement = Arrangement.spacedBy(AppDimens.Spacing.xl3)
 
         PullToRefreshBox(
-            modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
+            modifier = Modifier
+                .padding(horizontal = AppDimens.Spacing.xl3)
+                .padding(top = paddingValues.calculateTopPadding()),
             state = rememberPullToRefreshState(),
             isRefreshing = state.isRefreshing && state.articles.isNotEmpty(),
             onRefresh = {
@@ -110,7 +115,10 @@ private fun FeedScreenContent(state: FeedContract.State, onEvent: (FeedContract.
                     }
                 }
 
-                items(items = state.articles, key = { it.id }, contentType = { ARTICLE_ITEM_CT }) { article ->
+                items(
+                    items = state.articles,
+                    key = { it.id },
+                    contentType = { ARTICLE_ITEM_CT }) { article ->
                     ArticleItem(
                         modifier = Modifier.animateItem(),
                         data = article,
@@ -129,7 +137,8 @@ private fun FeedScreenContent(state: FeedContract.State, onEvent: (FeedContract.
 @Composable
 private fun ArticleItem(modifier: Modifier, data: Article, onClick: () -> Unit) {
     Card(
-        modifier = modifier.clickable(onClick = onClick),
+        onClick = onClick,
+        modifier = modifier,
     ) {
         Column {
             if (data.image != null) {

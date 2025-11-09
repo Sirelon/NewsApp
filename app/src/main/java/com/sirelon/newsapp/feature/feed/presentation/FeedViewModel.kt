@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -50,5 +49,9 @@ internal class FeedViewModel(
             FeedContract.Event.Refresh -> refreshEmitter.update { it + 1 }
             is FeedContract.Event.ArticleClicked -> postEffect(FeedContract.Effect.OpenUrl(event.url))
         }
+    }
+
+    fun resetEffects() {
+        postEffect(FeedContract.Effect.Idle)
     }
 }

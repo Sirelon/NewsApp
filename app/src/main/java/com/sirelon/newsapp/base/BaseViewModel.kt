@@ -1,11 +1,13 @@
 package com.sirelon.newsapp.base
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<State, Event, Effect> : ViewModel() {
 
@@ -24,6 +26,8 @@ abstract class BaseViewModel<State, Event, Effect> : ViewModel() {
     }
 
     protected fun postEffect(effect: Effect) {
-        _effects.tryEmit(effect)
+        viewModelScope.launch {
+            _effects.emit(effect)
+        }
     }
 }
