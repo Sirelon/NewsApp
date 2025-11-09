@@ -21,7 +21,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // TODO: Ideally should be moved to some local properties, and shared in repo.
-        buildConfigField("String", "NEWS_API_TOKEN", "\"f85eb3fa74ca4ae9b9b41fbc356be5b9\"")
+        buildConfigField("String", "NEWS_API_KEY", "\"f85eb3fa74ca4ae9b9b41fbc356be5b9\"")
     }
 
     buildTypes {
