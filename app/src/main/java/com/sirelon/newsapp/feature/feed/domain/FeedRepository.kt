@@ -1,10 +1,10 @@
 package com.sirelon.newsapp.feature.feed.domain
 
+import com.sirelon.newsapp.base.withRefreshAction
 import com.sirelon.newsapp.feature.feed.domain.mapper.HeadlinesMapper
 import com.sirelon.newsapp.feature.feed.local.FeedsLocalSource
 import com.sirelon.newsapp.feature.feed.remote.FeedsRemoteSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.onStart
 
 internal class FeedRepository(
     private val localSource: FeedsLocalSource,
@@ -17,10 +17,15 @@ internal class FeedRepository(
 
         return localSource
             .getArticles(sources)
-            .onStart {
-                val response = remoteSource.loadHeadlines(sources = sources)
-                val articles = headlinesMapper.map(response)
-                localSource.storeArticles(articles)
+            .withRefreshAction {
+                refreshArticles(sources)
             }
+    }
+
+    private suspend fun refreshArticles(sources: List<String>): List<Article> {
+        val response = remoteSource.loadHeadlines(sources = sources)
+        val articles = headlinesMapper.map(response)
+        localSource.storeArticles(articles)
+        return articles
     }
 }

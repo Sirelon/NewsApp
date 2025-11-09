@@ -2,21 +2,31 @@ package com.sirelon.newsapp.feature.feed.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sirelon.newsapp.feature.feed.domain.Article
@@ -36,33 +46,58 @@ fun FeedScreen() {
     FeedScreenContent(state = state, onEvent = viewModel::onEvent)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedScreenContent(state: FeedContract.State, onEvent: (FeedContract.Event) -> Unit) {
-    Scaffold { paddingValues ->
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(title = { Text(text = "Top Headlines") }, scrollBehavior = scrollBehavior)
+        }
+    ) { paddingValues ->
         val arrangement = Arrangement.spacedBy(AppDimens.Spacing.xl3)
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = AppDimens.Size.xl15),
-            contentPadding = paddingValues,
-            verticalArrangement = arrangement,
-            horizontalArrangement = arrangement,
+
+        PullToRefreshBox(
+            modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
+            state = rememberPullToRefreshState(),
+            isRefreshing = state.isLoading,
+            onRefresh = {
+                onEvent(FeedContract.Event.Refresh)
+            },
         ) {
-            if (state.isLoading) {
-                stickyHeader(key = LOADING_ITEM_CT, contentType = LOADING_ITEM_CT) {
-                    LinearProgressIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(paddingValues)
-                            .padding(AppDimens.Spacing.m),
-                    )
-                }
+            val layoutDirection = LocalLayoutDirection.current
+            val contentPadding = remember(layoutDirection, paddingValues) {
+                PaddingValues(
+                    start = paddingValues.calculateStartPadding(layoutDirection),
+                    end = paddingValues.calculateEndPadding(layoutDirection),
+                    bottom = paddingValues.calculateBottomPadding()
+                )
             }
 
-            items(
-                items = state.articles,
-                key = { it.id },
-                contentType = { ARTICLE_ITEM_CT }
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = AppDimens.Size.xl21),
+                contentPadding = contentPadding,
+                verticalArrangement = arrangement,
+                horizontalArrangement = arrangement,
             ) {
-                ArticleItem(modifier = Modifier.animateItem(), data = it)
+                if (state.isLoading) {
+                    stickyHeader(key = LOADING_ITEM_CT, contentType = LOADING_ITEM_CT) {
+                        LinearProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(AppDimens.Spacing.m),
+                        )
+                    }
+                }
+
+                items(
+                    items = state.articles,
+                    key = { it.id },
+                    contentType = { ARTICLE_ITEM_CT }
+                ) {
+                    ArticleItem(modifier = Modifier.animateItem(), data = it)
+                }
             }
         }
     }

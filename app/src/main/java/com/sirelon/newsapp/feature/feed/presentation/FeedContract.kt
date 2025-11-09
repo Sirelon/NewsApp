@@ -10,7 +10,7 @@ internal sealed interface FeedContract {
     )
 
     sealed interface Event {
-
+        data object Refresh: Event
     }
 
     sealed interface Effect {
