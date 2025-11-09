@@ -11,6 +11,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
@@ -40,6 +41,8 @@ private fun createHttpClient(): HttpClient = HttpClient(OkHttp) {
     defaultRequest {
         url(API_BASE_URL)
         header(HttpHeaders.Accept, ContentType.Application.Json)
-        header("apiKey", BuildConfig.NEWS_API_KEY)
+        parameters {
+            append("apiKey", BuildConfig.NEWS_API_KEY)
+        }
     }
 }
