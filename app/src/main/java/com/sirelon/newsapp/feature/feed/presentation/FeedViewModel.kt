@@ -1,6 +1,7 @@
 package com.sirelon.newsapp.feature.feed.presentation
 
 import androidx.lifecycle.viewModelScope
+import com.sirelon.newsapp.R
 import com.sirelon.newsapp.base.BaseViewModel
 import com.sirelon.newsapp.feature.feed.domain.FeedRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,10 +31,14 @@ internal class FeedViewModel(
                     )
                 }
             }
-            .catch {
-                // TODO: handle error
-                it.printStackTrace()
+            .catch { throwable ->
+                throwable.printStackTrace()
                 setState { it.copy(isRefreshing = false) }
+                postEffect(
+                    FeedContract.Effect.ShowSnackbar(
+                        R.string.feed_error_refresh_failed
+                    )
+                )
             }
             .launchIn(viewModelScope)
     }

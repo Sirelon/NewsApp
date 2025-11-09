@@ -16,6 +16,8 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -48,12 +50,16 @@ fun FeedScreen() {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val effect by viewModel.effects.collectAsStateWithLifecycle(FeedContract.Effect.Idle)
 
     LaunchedEffect(effect) {
         when (val e = effect) {
             is FeedContract.Effect.OpenUrl -> context.openChromeTab(e.url)
+            is FeedContract.Effect.ShowSnackbar -> snackbarHostState.showSnackbar(
+                context.getString(e.messageRes)
+            )
             FeedContract.Effect.Idle -> {
                 // no op
             }
@@ -61,16 +67,25 @@ fun FeedScreen() {
         viewModel.resetEffects()
     }
 
-    FeedScreenContent(state = state, onEvent = viewModel::onEvent)
+    FeedScreenContent(
+        state = state,
+        snackbarHostState = snackbarHostState,
+        onEvent = viewModel::onEvent,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun FeedScreenContent(state: FeedContract.State, onEvent: (FeedContract.Event) -> Unit) {
+private fun FeedScreenContent(
+    state: FeedContract.State,
+    snackbarHostState: SnackbarHostState,
+    onEvent: (FeedContract.Event) -> Unit,
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             LargeTopAppBar(
                 title = { Text(text = stringResource(R.string.feed_top_headlines)) },
@@ -185,6 +200,7 @@ private fun FeedScreenContentPreview(modifier: Modifier = Modifier) {
 
     FeedScreenContent(
         state = state,
+        snackbarHostState = remember { SnackbarHostState() },
         onEvent = {
 
         },
