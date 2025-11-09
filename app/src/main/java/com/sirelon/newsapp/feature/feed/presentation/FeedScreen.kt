@@ -61,7 +61,7 @@ private fun FeedScreenContent(state: FeedContract.State, onEvent: (FeedContract.
         PullToRefreshBox(
             modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
             state = rememberPullToRefreshState(),
-            isRefreshing = state.isLoading,
+            isRefreshing = state.isRefreshing && state.articles.isNotEmpty(),
             onRefresh = {
                 onEvent(FeedContract.Event.Refresh)
             },
@@ -81,7 +81,7 @@ private fun FeedScreenContent(state: FeedContract.State, onEvent: (FeedContract.
                 verticalArrangement = arrangement,
                 horizontalArrangement = arrangement,
             ) {
-                if (state.isLoading) {
+                if (state.isRefreshing && state.articles.isEmpty()) {
                     stickyHeader(key = LOADING_ITEM_CT, contentType = LOADING_ITEM_CT) {
                         LinearProgressIndicator(
                             modifier = Modifier
@@ -145,7 +145,7 @@ private fun ArticleItem(modifier: Modifier, data: Article) {
 private fun FeedScreenContentPreview(modifier: Modifier = Modifier) {
     val (state, setState) = remember {
         mutableStateOf(
-            value = FeedContract.State(articles = emptyList(), isLoading = true)
+            value = FeedContract.State(articles = emptyList(), isRefreshing = true)
         )
     }
 

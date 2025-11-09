@@ -20,19 +20,21 @@ internal class FeedViewModel(
     private val refreshEmitter = MutableStateFlow(0)
 
     init {
-        // TODO: show progress for network fetching.
         refreshEmitter
-            .flatMapLatest {
-                repository.topHeadlines()
-            }
-            .onStart { setState { it.copy(isLoading = true) } }
-            .onEach { articles ->
-                setState { it.copy(articles = articles, isLoading = false) }
+            .onEach { setState { it.copy(isRefreshing = true) } }
+            .flatMapLatest { repository.topHeadlines() }
+            .onEach { topHeadlines ->
+                setState {
+                    it.copy(
+                        articles = topHeadlines.articles,
+                        isRefreshing = it.isRefreshing && !topHeadlines.fromNet,
+                    )
+                }
             }
             .catch {
                 // TODO: handle error
                 it.printStackTrace()
-                setState { it.copy(isLoading = false) }
+                setState { it.copy(isRefreshing = false) }
             }
             .launchIn(viewModelScope)
     }
@@ -40,7 +42,7 @@ internal class FeedViewModel(
     override fun initialState(): FeedContract.State =
         FeedContract.State(
             articles = emptyList(),
-            isLoading = false,
+            isRefreshing = false,
         )
 
     override fun onEvent(event: FeedContract.Event) {

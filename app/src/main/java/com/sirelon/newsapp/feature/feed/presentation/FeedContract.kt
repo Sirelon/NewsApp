@@ -6,7 +6,7 @@ internal sealed interface FeedContract {
 
     data class State(
         val articles: List<Article>,
-        val isLoading: Boolean,
+        val isRefreshing: Boolean,
     )
 
     sealed interface Event {
