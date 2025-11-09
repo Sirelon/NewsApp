@@ -2,4 +2,5 @@
     <string name="app_name">NewsApp</string>
     <string name="feed_top_headlines">Top Headlines</string>
     <string name="feed_article_author">Author: %1$s</string>
+    <string name="feed_error_refresh_failed">Failed to refresh headlines</string>
 </resources>

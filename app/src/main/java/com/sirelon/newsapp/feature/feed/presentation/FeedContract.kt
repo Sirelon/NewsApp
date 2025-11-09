@@ -1,5 +1,6 @@
 package com.sirelon.newsapp.feature.feed.presentation
 
+import androidx.annotation.StringRes
 import com.sirelon.newsapp.feature.feed.domain.Article
 
 internal sealed interface FeedContract {
@@ -16,6 +17,7 @@ internal sealed interface FeedContract {
 
     sealed interface Effect {
         data class OpenUrl(val url: String) : Effect
+        data class ShowSnackbar(@StringRes val messageRes: Int) : Effect
         data object Idle : Effect
     }
 }
