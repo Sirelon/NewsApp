@@ -30,8 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sirelon.newsapp.R
 import com.sirelon.newsapp.common.openChromeTab
 import com.sirelon.newsapp.feature.feed.domain.Article
 import com.sirelon.newsapp.ui.components.NetworkImage
@@ -67,7 +69,10 @@ private fun FeedScreenContent(state: FeedContract.State, onEvent: (FeedContract.
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(title = { Text(text = "Top Headlines") }, scrollBehavior = scrollBehavior)
+            TopAppBar(
+                title = { Text(text = stringResource(R.string.feed_top_headlines)) },
+                scrollBehavior = scrollBehavior
+            )
         }
     ) { paddingValues ->
         val arrangement = Arrangement.spacedBy(AppDimens.Spacing.xl3)
@@ -153,7 +158,7 @@ private fun ArticleItem(modifier: Modifier, data: Article, onClick: () -> Unit) 
                     end = AppDimens.Spacing.m,
                     bottom = AppDimens.Spacing.m
                 ),
-                text = "Author: ${data.author}",
+                text = stringResource(R.string.feed_article_author, data.author),
                 style = MaterialTheme.typography.labelSmall
             )
         }
