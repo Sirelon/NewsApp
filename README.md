@@ -2,6 +2,8 @@
 
 This is a simple news application that displays a feed of articles from a remote API.
 
+https://github.com/Sirelon/NewsApp/blob/main/Screen_recording_20251109_142523.mp4
+
 ## Architecture
 
 The app follows the MVI (Model-View-Intent) architecture pattern, with a Repository layer for data handling.
