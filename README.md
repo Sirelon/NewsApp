@@ -4,13 +4,16 @@ This is a simple news application that displays a feed of articles from a remote
 
 ## Architecture
 
-The app follows the MVI (Model-View-Intent) architecture pattern. This pattern helps to separate concerns and makes the code easier to manage and test.
+The app follows the MVI (Model-View-Intent) architecture pattern, with a Repository layer for data handling.
 
-- **Model:** Represents the state of the UI.
-- **View:** A composable function that observes state changes and renders the UI.
-- **Intent:** Represents user actions or events that can modify the state.
-
-
+- **MVI (Model-View-Intent):** The core presentation layer pattern.
+    - **Model:** Represents the UI state.
+    - **View:** The UI, built with Jetpack Compose, which observes state changes.
+    - **Intent:** User actions that trigger state updates.
+- **Repository:** Manages data operations. It abstracts the data sources from the rest of the app, providing a clean API for data access to the ViewModel.
+- **Data Sources:** Provides the actual data. In this app, we have:
+    - **Remote Source:** Fetches news articles from a network API using Ktor.
+    - **Local Source:** Store previously fetched data data in memory.
 
 ## Libraries Used
 
