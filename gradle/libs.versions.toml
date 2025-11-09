@@ -13,6 +13,7 @@ koin = "4.1.1"
 ktor = "3.3.2"
 kotlinxSerialization = "1.7.1"
 kotlinxCoroutines = "1.10.2"
+browser = "1.8.0"
 # https://github.com/coil-kt/coil/releases
 coil = "3.3.0"
 
@@ -44,6 +45,7 @@ ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serializatio
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

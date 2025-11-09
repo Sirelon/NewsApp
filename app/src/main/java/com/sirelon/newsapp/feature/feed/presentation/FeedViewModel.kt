@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FeedViewModel(
-    repository: FeedRepository,
+    private val repository: FeedRepository,
 ) : BaseViewModel<FeedContract.State, FeedContract.Event, FeedContract.Effect>() {
 
     private val refreshEmitter = MutableStateFlow(0)
@@ -48,6 +48,7 @@ internal class FeedViewModel(
     override fun onEvent(event: FeedContract.Event) {
         when (event) {
             FeedContract.Event.Refresh -> refreshEmitter.update { it + 1 }
+            is FeedContract.Event.ArticleClicked -> postEffect(FeedContract.Effect.OpenUrl(event.url))
         }
     }
 }
