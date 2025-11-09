@@ -1,6 +1,7 @@
 package com.sirelon.newsapp.feature.feed
 
 import com.sirelon.newsapp.feature.feed.domain.FeedRepository
+import com.sirelon.newsapp.feature.feed.domain.mapper.HeadlinesMapper
 import com.sirelon.newsapp.feature.feed.local.FeedsLocalSource
 import com.sirelon.newsapp.feature.feed.presentation.FeedViewModel
 import com.sirelon.newsapp.feature.feed.remote.FeedsRemoteSource
@@ -12,6 +13,7 @@ val feedModule = module {
     // data
     factoryOf(::FeedsRemoteSource)
     factoryOf(::FeedsLocalSource)
+    factoryOf(::HeadlinesMapper)
 
     // domain
     factoryOf(::FeedRepository)
